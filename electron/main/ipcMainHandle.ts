@@ -48,6 +48,7 @@ export default (mainWindow)=>{
                 if (whoXWho === '2x2') {
                     let buffer = await sharp(resolve(xx, Name.name)).resize(160, 160).toBuffer();
                     fse.writeFileSync(resolve(targetPath, `./${FileName}/picker所需资源/不带外框160.png`), buffer)
+                    
                     buffer = await sharp(resolve(xx, Name.name)).resize(122, 122).toBuffer();
                     fse.writeFileSync(resolve(targetPath, `./${FileName}/桌面所需资源/外框122.png`), buffer)
                     buffer = await sharp(resolve(xx, Name.name)).resize(168, 168).toBuffer();
@@ -56,6 +57,9 @@ export default (mainWindow)=>{
                     fse.writeFileSync(resolve(targetPath, `./${FileName}/桌面所需资源/外框224.png`), buffer)
                     buffer = await sharp(resolve(xx, Name.name)).resize(587, 587).toBuffer();
                     fse.writeFileSync(resolve(targetPath, `./${FileName}/桌面所需资源/2K/2x2.png`), buffer)
+
+                    buffer = await sharp(resolve(xx, Name.name)).resize(486, 486).toBuffer();
+                    fse.writeFileSync(resolve(targetPath, `./${FileName}/picker所需资源/汇总.png`), buffer)
                 }
                 if (whoXWho === '1x2') {
                     let buffer = await sharp(resolve(xx, Name.name)).resize(248, 587).toBuffer();
