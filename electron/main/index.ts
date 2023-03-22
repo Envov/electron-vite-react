@@ -2,6 +2,7 @@ import { app, BrowserWindow, shell, ipcMain,Menu,nativeTheme } from 'electron'
 import { release } from 'node:os'
 import { join } from 'node:path'
 import { update } from './update'
+import ipcMainHandle  from './ipcMainHandle'
 
 // The built directory structure
 //
@@ -62,6 +63,7 @@ async function createWindow() {
       contextIsolation: false,
     },
   });
+  ipcMainHandle(win)
  
 
   if (process.env.VITE_DEV_SERVER_URL) { // electron-vite-vue#298

@@ -1,6 +1,6 @@
 {
   "name": "electron-vite-react",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "main": "dist-electron/main/index.js",
   "description": "Electron Vite React boilerplate.",
   "author": "草鞋没号 <308487730@qq.com>",
@@ -19,7 +19,9 @@
     "e2e": "playwright test"
   },
   "dependencies": {
-    "electron-updater": "^5.3.0"
+    "electron-updater": "^5.3.0",
+    "fs-extra": "^11.1.1",
+    "sharp": "^0.31.3"
   },
   "devDependencies": {
     "@playwright/test": "^1.31.0",

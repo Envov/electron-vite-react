@@ -7,7 +7,21 @@
 .card {
   padding: 2em;
 }
-
+.darg-box{
+  box-sizing: border-box;
+  padding: 1rem;
+  width: 445px;
+  margin-top: 20px;
+  height: 200px;
+  border-radius: 4px;
+  color: #888;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba($color: #444, $alpha: .5);
+  white-space: pre-line;
+}
 .read-the-docs {
   color: #888;
 }
