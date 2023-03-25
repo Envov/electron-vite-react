@@ -12,7 +12,7 @@
   padding: 1rem;
   width: 445px;
   margin-top: 20px;
-  height: 200px;
+  height: 150px;
   border-radius: 4px;
   color: #888;
   display: flex;
@@ -21,6 +21,10 @@
   justify-content: center;
   border: 1px solid rgba($color: #444, $alpha: .5);
   white-space: pre-line;
+}
+.currt-name{
+  margin-top: 10px;
+  color: #888;
 }
 .read-the-docs {
   color: #888;

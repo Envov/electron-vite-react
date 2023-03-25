@@ -8,6 +8,8 @@ console.log(
 
 function App() {
   const [targetPath, targetPathSet] = useState("");
+  const [name, nameSet] = useState("未开始");
+  const [progress, progressSet] = useState(0);
   const [folders, foldersSet] = useState<string[]>([]);
   const onGetTargetFilePath: React.DOMAttributes<HTMLInputElement>["onDrag"] = (
     e
@@ -42,15 +44,25 @@ function App() {
    
   };
   const start=()=>{
+     progressSet(0);
+     nameSet("");
     ipcRenderer.send('start', targetPath, folders)
   }
   useEffect(()=>{
     const handle = () => {
       ipcRenderer.send('alert', "提示", "转换完成")
+      progressSet(100);
+      nameSet("转换完成");
     }
+    const handleProgress = (enevt, num,name) => {
+      nameSet(name);
+      progressSet(num*100);
+    };
     ipcRenderer.on("ok", handle)
+    ipcRenderer.on("progress", handleProgress);
     return ()=>{
       ipcRenderer.removeListener('ok', handle)
+      ipcRenderer.removeListener("progress", handleProgress);
     }
   },[])
   return (
@@ -69,6 +81,12 @@ function App() {
       </div>
       <div className="darg-box" onDragOver={(e) => e.preventDefault()} onDrop={onGetSourceFiles}>
         {folders?.length ? folders.join("\n") :'拖入1x2|2x1|2x2文件夹'}
+      </div>
+      <div className="progress">
+            <div className="p-content" style={{width:progress+'%'}}></div>
+      </div>
+      <div className="currt-name">
+        {name}
       </div>
     </div>
   );
