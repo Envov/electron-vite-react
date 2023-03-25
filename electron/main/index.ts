@@ -46,13 +46,13 @@ async function createWindow() {
   Menu.setApplicationMenu(null)
   win = new BrowserWindow({
     title: "转换工具",
-    maxHeight: 361,
-    minHeight: 361,
+    maxHeight: 640,
+    minHeight: 640,
     backgroundColor: nativeTheme?.shouldUseDarkColors ? "#242424" : "#fff",
-    height: 361,
-    width: 550,
-    maxWidth: 550,
-    minWidth: 550,
+    height: 640,
+    width: 505,
+    maxWidth: 505,
+    minWidth: 505,
     icon: join(process.env.PUBLIC, "favicon.icns"),
     webPreferences: {
       preload,

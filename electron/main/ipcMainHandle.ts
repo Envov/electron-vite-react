@@ -5,7 +5,10 @@ import path from "path";
 import { resolve } from "node:path";
 import { readdirSync } from "original-fs";
 export default (mainWindow) => {
-  ipcMain.on("start", async (event, targetPath: string, sources: string[]) => {
+  ipcMain.on("start", async (event, targetPath: string, sources: string[], { fangda = 3,
+    mohu = 30,
+    jyyj=false,
+    hei = '0.3' }) => {
     // 删除目标文件夹内容
     fse.removeSync(targetPath);
     fse.mkdirSync(targetPath);
@@ -111,11 +114,54 @@ export default (mainWindow) => {
         }
         // 处理汇总
         if (whoXWho === "2x2") {
+          const rect = `<svg><rect  width="100%" height="100%" rx="${jyyj ? 0 : 22}" ry="${jyyj ? 0 : 22}"/></svg>`
           let buffer = await sharp(resolve(xx, Name.name))
             .resize(486, 486)
-            .blur(50)
-            .gamma(2)
             .composite([
+
+              {
+                input: await sharp(resolve(xx, Name.name))
+                  .resize(486 * fangda, 486 * fangda)
+                  .composite([
+                    {
+                      input: await sharp(
+                        Buffer.from(
+                          '<svg><rect  width="100%" height="100%" rx="0" ry="0"/></svg>'
+                        )
+                      )
+                        .resize(486, 486)
+                        .toBuffer(),
+                      left: 0,
+                      top: 0,
+                      blend: "dest-in",
+                    },
+                  ])
+                  .extract({
+                    left: (486 * fangda - 486)/2,
+                    top: (486 * fangda - 486) / 2,
+                    width: 486,
+                    height: 486
+                  }).
+                  blur(mohu)
+                  .toBuffer(),
+
+                left: 0,
+                top: 0,
+              },
+
+              {
+                input: {
+                  create: {
+                    width: 486,
+                    height: 486,
+                    background: `rgba(0,0,0,${hei})`,
+                    channels: 4,
+                  }
+                },
+                top: 0,
+                left: 0
+              },
+
               {
                 input: await sharp(
                   resolve(targetPath, `./${FileName}/picker所需资源/2x2.png`)
@@ -125,7 +171,7 @@ export default (mainWindow) => {
                     {
                       input: await sharp(
                         Buffer.from(
-                          '<svg><rect  width="100%" height="100%" rx="22" ry="22"/></svg>'
+                          rect
                         )
                       )
                         .resize(92, 92)
@@ -150,7 +196,7 @@ export default (mainWindow) => {
                     {
                       input: await sharp(
                         Buffer.from(
-                          '<svg><rect  width="100%" height="100%" rx="22" ry="22"/></svg>'
+                          rect
                         )
                       )
                         .resize(245, 245)
@@ -173,7 +219,7 @@ export default (mainWindow) => {
                     {
                       input: await sharp(
                         Buffer.from(
-                          '<svg><rect  width="92" height="245" rx="22" ry="22"/></svg>'
+                          `<svg><rect  width="92" height="245" rx="${jyyj ? 0 : 22}" ry="${jyyj ? 0 : 22}"/></svg>`
                         )
                       )
                         .resize(92, 245)
@@ -196,7 +242,7 @@ export default (mainWindow) => {
                     {
                       input: await sharp(
                         Buffer.from(
-                          '<svg><rect  width="245" height="90" rx="22" ry="22"/></svg>'
+                          `<svg><rect  width="245" height="90" rx="${jyyj ? 0 : 22}" ry="${jyyj ? 0 : 22}"/></svg>`
                         )
                       )
                         .resize(245, 90)
@@ -210,6 +256,7 @@ export default (mainWindow) => {
                 top: 326,
                 left: 175,
               },
+
             ])
             .toBuffer();
 

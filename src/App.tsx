@@ -10,6 +10,13 @@ function App() {
   const [targetPath, targetPathSet] = useState("");
   const [name, nameSet] = useState("未开始");
   const [progress, progressSet] = useState(0);
+  const [fangda, fangdaSet] = useState<any>('3');
+  const [mohu, mohuSet] = useState<any>('30');
+  const [hei, heiSet] = useState<any>('0.3');
+  const [jyyj, jyyjSet] = useState<any>(true);
+ 
+
+
   const [folders, foldersSet] = useState<string[]>([]);
   const onGetTargetFilePath: React.DOMAttributes<HTMLInputElement>["onDrag"] = (
     e
@@ -46,7 +53,12 @@ function App() {
   const start=()=>{
      progressSet(0);
      nameSet("");
-    ipcRenderer.send('start', targetPath, folders)
+    ipcRenderer.send('start', targetPath, folders,{
+      fangda: parseFloat(fangda || 3),
+      mohu: parseFloat(mohu || 30) ,
+      hei: parseFloat(hei || '0.3'),
+      jyyj: jyyj,
+    })
   }
   useEffect(()=>{
     const handle = () => {
@@ -54,7 +66,7 @@ function App() {
       progressSet(100);
       nameSet("转换完成");
     }
-    const handleProgress = (enevt, num,name) => {
+    const handleProgress = (enevt: any, num: any, name: any) => {
       nameSet(name);
       progressSet(num*100);
     };
@@ -78,6 +90,47 @@ function App() {
           onDrop={onGetTargetFilePath}
         />
         <button onClick={start}>转换</button>
+      </div>
+      <div className="flex-row al-c" style={{ marginTop: 20 }}>
+        放大倍数(最低1):
+      <input
+        value={fangda}
+        onChange={v => fangdaSet(v.target.value)}
+        type="text"
+        placeholder="放大倍数"
+        style={{  width: "280px", }}
+      />
+      </div>
+      <div className="flex-row al-c" style={{ marginTop: 20 }}>
+      模糊倍数0-1000:
+      <input
+        value={mohu}
+        onChange={v => mohuSet(v.target.value)}
+        type="text"
+        placeholder="模糊倍数0-1000"
+          style={{  width: "280px", }}
+      />
+      </div>
+      <div className="flex-row al-c" style={{ marginTop: 20 }}>
+        黑色倍数0-1:
+        <input
+          value={hei}
+          onChange={v => heiSet(v.target.value)}
+          type="text"
+          placeholder="黑色倍数0-1"
+          style={{  width: "280px",}}
+        />
+      </div>
+     
+     
+      <br/>
+      <div className="flex-row al-c" style={{marginTop:20}}>
+        是否禁用圆角:<input type="checkbox" checked={jyyj} onChange={v=>{
+          console.log(v.target.checked)
+          jyyjSet(v.target.checked)
+          
+       
+        }}/> 
       </div>
       <div className="darg-box" onDragOver={(e) => e.preventDefault()} onDrop={onGetSourceFiles}>
         {folders?.length ? folders.join("\n") :'拖入1x2|2x1|2x2文件夹'}
