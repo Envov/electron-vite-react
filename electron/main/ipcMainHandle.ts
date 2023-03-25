@@ -5,6 +5,27 @@ import path from "path";
 import { resolve } from "node:path";
 import { readdirSync } from "original-fs";
 export default (mainWindow) => {
+  ipcMain.on('move', async (event, finedFIles, pathFile)=>{
+    fse.removeSync(resolve(pathFile + '/新建文件夹/'));
+    fse.mkdirSync(resolve(pathFile + '/新建文件夹/'));
+    for (let fileName of finedFIles){
+      const f = resolve(pathFile, fileName)
+      const t = resolve(pathFile + '/新建文件夹/', `./${fileName}`)
+      function exists(path) {
+        return new Promise(resolve => {
+          fse.exists(path, resolve);
+        })
+      }
+      if (await exists(f)){
+        await fse.copySync(
+          f,
+          t,
+        )
+      }
+    }
+    mainWindow.webContents.send('moveok')
+   
+  })
   ipcMain.on("start", async (event, targetPath: string, sources: string[], { fangda = 3,
     mohu = 30,
     jyyj=false,

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import finedFIles from "./file"
 import "./App.scss";
 import { contextBridge, ipcRenderer, Notification } from 'electron';
 console.log(
@@ -50,6 +51,23 @@ function App() {
     foldersSet(foldersList)
    
   };
+  const get40files: React.DOMAttributes<HTMLInputElement>["onDrag"] = (
+    e
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const items = e.dataTransfer.items;
+    if (!items.length) return;
+    const foldersList:string[]=[]
+    for (let folder of items){
+      if (folder.kind === "file" && !folder?.webkitGetAsEntry()?.isFile) {
+        const pathFile = folder?.getAsFile()?.path || "";
+       
+        ipcRenderer.send('move', finedFIles, pathFile)
+  
+      }
+    }
+  };
   const start=()=>{
      progressSet(0);
      nameSet("");
@@ -66,15 +84,21 @@ function App() {
       progressSet(100);
       nameSet("转换完成");
     }
+    const moveok = () => {
+      console.log('move')
+      ipcRenderer.send('alert', "提示", "移动完成")
+    }
     const handleProgress = (enevt: any, num: any, name: any) => {
       nameSet(name);
       progressSet(num*100);
     };
     ipcRenderer.on("ok", handle)
     ipcRenderer.on("progress", handleProgress);
+    ipcRenderer.on("moveok", moveok);
     return ()=>{
       ipcRenderer.removeListener('ok', handle)
       ipcRenderer.removeListener("progress", handleProgress);
+      ipcRenderer.removeListener("moveok", moveok);
     }
   },[])
   return (
@@ -140,6 +164,9 @@ function App() {
       </div>
       <div className="currt-name">
         {name}
+      </div>
+      <div className="darg-box" onDragOver={(e) => e.preventDefault()} onDrop={get40files}>
+        
       </div>
     </div>
   );
