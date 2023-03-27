@@ -29,7 +29,8 @@ export default (mainWindow) => {
   ipcMain.on("start", async (event, targetPath: string, sources: string[], { fangda = 3,
     mohu = 30,
     jyyj=false,
-    hei = '0.3' }) => {
+    hei = '0.3',
+    yuanjiao = 22 }) => {
     // 删除目标文件夹内容
     fse.removeSync(targetPath);
     fse.mkdirSync(targetPath);
@@ -44,12 +45,18 @@ export default (mainWindow) => {
      * sources/whoXWho/Name.png拷贝到targetPath/Name/桌面所需资源/外框224.png
      * sources/whoXWho/Name.png拷贝到targetPath/Name/桌面所需资源/2K/whoXWho.png
      */
+    const resizeOptions = {
+      withoutEnlargement: false,
+      withoutReduction: false,
+      fit: "fill",
+    } as any
     for (let xx of sources) {
       const Names = fse.readdirSync(xx, {
         withFileTypes: true,
         encoding: "utf-8",
       });
       const whoXWho = path.posix.basename(xx).match(/\dx\d/)[0];
+
       for (let i = 0; i < Names?.length; i++) {
         const Name = Names[i];
 
@@ -79,7 +86,7 @@ export default (mainWindow) => {
 
         if (whoXWho === "2x2") {
           let buffer = await sharp(resolve(xx, Name.name))
-            .resize(160, 160)
+            .resize(160, 160,resizeOptions)
             .toBuffer();
           fse.writeFileSync(
             resolve(targetPath, `./${FileName}/picker所需资源/不带外框160.png`),
@@ -87,28 +94,28 @@ export default (mainWindow) => {
           );
 
           buffer = await sharp(resolve(xx, Name.name))
-            .resize(122, 122)
+            .resize(122, 122,resizeOptions)
             .toBuffer();
           fse.writeFileSync(
             resolve(targetPath, `./${FileName}/桌面所需资源/外框122.png`),
             buffer
           );
           buffer = await sharp(resolve(xx, Name.name))
-            .resize(168, 168)
+            .resize(168, 168,resizeOptions)
             .toBuffer();
           fse.writeFileSync(
             resolve(targetPath, `./${FileName}/桌面所需资源/外框168.png`),
             buffer
           );
           buffer = await sharp(resolve(xx, Name.name))
-            .resize(224, 224)
+            .resize(224, 224,resizeOptions)
             .toBuffer();
           fse.writeFileSync(
             resolve(targetPath, `./${FileName}/桌面所需资源/外框224.png`),
             buffer
           );
           buffer = await sharp(resolve(xx, Name.name))
-            .resize(587, 587)
+            .resize(587, 587,resizeOptions)
             .toBuffer();
           fse.writeFileSync(
             resolve(targetPath, `./${FileName}/桌面所需资源/2K/2x2.png`),
@@ -117,7 +124,7 @@ export default (mainWindow) => {
         }
         if (whoXWho === "1x2") {
           let buffer = await sharp(resolve(xx, Name.name))
-            .resize(248, 587)
+            .resize(248, 587,resizeOptions)
             .toBuffer();
           fse.writeFileSync(
             resolve(targetPath, `./${FileName}/桌面所需资源/2K/1x2.png`),
@@ -126,7 +133,7 @@ export default (mainWindow) => {
         }
         if (whoXWho === "2x1") {
           let buffer = await sharp(resolve(xx, Name.name))
-            .resize(587, 214)
+            .resize(587, 214,resizeOptions)
             .toBuffer();
           fse.writeFileSync(
             resolve(targetPath, `./${FileName}/桌面所需资源/2K/2x1.png`),
@@ -135,14 +142,15 @@ export default (mainWindow) => {
         }
         // 处理汇总
         if (whoXWho === "2x2") {
-          const rect = `<svg><rect  width="100%" height="100%" rx="${jyyj ? 0 : 22}" ry="${jyyj ? 0 : 22}"/></svg>`
+          const rect = jyyj ? null : `<svg><rect  width="100%" height="100%" rx="${yuanjiao}" ry="${yuanjiao}"/></svg>`
+           
           let buffer = await sharp(resolve(xx, Name.name))
-            .resize(486, 486)
+            .resize(486, 486,resizeOptions)
             .composite([
 
               {
                 input: await sharp(resolve(xx, Name.name))
-                  .resize(486 * fangda, 486 * fangda)
+                  .resize(486 * fangda, 486 * fangda,resizeOptions)
                   .composite([
                     {
                       input: await sharp(
@@ -150,7 +158,7 @@ export default (mainWindow) => {
                           '<svg><rect  width="100%" height="100%" rx="0" ry="0"/></svg>'
                         )
                       )
-                        .resize(486, 486)
+                        .resize(486, 486,resizeOptions)
                         .toBuffer(),
                       left: 0,
                       top: 0,
@@ -187,63 +195,72 @@ export default (mainWindow) => {
                 input: await sharp(
                   resolve(targetPath, `./${FileName}/picker所需资源/2x2.png`)
                 )
-                  .resize(92, 92)
-                  .composite([
+                  .resize(90, 90,resizeOptions)
+                  .composite(rect?[
                     {
                       input: await sharp(
                         Buffer.from(
                           rect
                         )
                       )
-                        .resize(92, 92)
+                        .resize(90, 90,resizeOptions)
                         .toBuffer(),
                       left: 0,
                       top: 0,
                       blend: "dest-in",
                     },
-                  ])
+                  ]:[])
                   .toBuffer(),
 
-                left: 66,
-                top: 65,
+                left: 67,
+                top: 67,
               },
 
               {
                 input: await sharp(
                   resolve(targetPath, `./${FileName}/picker所需资源/2x2.png`)
                 )
-                  .resize(245, 245)
-                  .composite([
+                  .resize(245, 245,resizeOptions)
+                  .composite(rect?[
                     {
                       input: await sharp(
                         Buffer.from(
                           rect
                         )
                       )
-                        .resize(245, 245)
+                        .resize(245, 245,resizeOptions)
                         .toBuffer(),
                       left: 0,
                       top: 0,
                       blend: "dest-in",
                     },
-                  ])
+                  ]:[])
                   .toBuffer(),
-                top: 65,
-                left: 175,
+                left: 174,
+                top: 67,
+                
               },
               {
                 input: await sharp(
                   resolve(targetPath, `./${FileName}/picker所需资源/1x2.png`)
                 )
-                  .resize(92, 245)
-                  .composite([
+                  .resize(90, 245,{
+                    withoutEnlargement:false,
+                    withoutReduction:false,
+                    fit: "fill",
+                  })
+                  .composite(jyyj?[]:[
                     {
                       input: await sharp(
                         Buffer.from(
-                          `<svg><rect  width="92" height="245" rx="${jyyj ? 0 : 22}" ry="${jyyj ? 0 : 22}"/></svg>`
+                          `<svg><rect  width="90" height="245" rx="${Math.min(yuanjiao, 45)}" ry="${Math.min(yuanjiao, 45) }"/></svg>`
                         )
                       )
-                        .resize(92, 245)
+                        .resize(90, 245, {
+                          fit:"fill",
+                          withoutEnlargement: false,
+                          withoutReduction: false
+                        })
                         .toBuffer(),
                       left: 0,
                       top: 0,
@@ -251,22 +268,23 @@ export default (mainWindow) => {
                     },
                   ])
                   .toBuffer(),
-                top: 175,
-                left: 65,
+                left: 67,
+                top: 174,
+                
               },
               {
                 input: await sharp(
                   resolve(targetPath, `./${FileName}/picker所需资源/2x1.png`)
                 )
-                  .resize(245, 90)
-                  .composite([
+                  .resize(245, 90,resizeOptions)
+                  .composite(jyyj?[]:[
                     {
                       input: await sharp(
                         Buffer.from(
-                          `<svg><rect  width="245" height="90" rx="${jyyj ? 0 : 22}" ry="${jyyj ? 0 : 22}"/></svg>`
+                          `<svg><rect  width="245" height="90" rx="${Math.min(45, yuanjiao)}" ry="${ Math.min(yuanjiao,45)}"/></svg>`
                         )
                       )
-                        .resize(245, 90)
+                        .resize(245, 90,resizeOptions)
                         .toBuffer(),
                       left: 0,
                       top: 0,
@@ -274,8 +292,9 @@ export default (mainWindow) => {
                     },
                   ])
                   .toBuffer(),
-                top: 326,
-                left: 175,
+                left: 174,
+                top: 328,
+                
               },
 
             ])
